@@ -1,1 +1,7 @@
-README HERE
+This is an outdated encryption packetlogger to load, intercept and decrypt network traffic from the game "Habbo" (http://habbo.com). It is purely for educational purposes ONLY.
+
+How does it work?
+-----------------
+This application also uses the HabboBitmapHaxSWF as a dependancy. A flash OCX object loads the SWF and interacts with it using some lame COM component that isn't very thread-safe... however, it worked rather well. Habbo used the Diffie-Hellman Key Exchange algorithm and a type of steganography to hide the required values for this algorithm to calculate a shared key within a PNG image (see HabboBitmapHaxSWF). They also use a custom UTF-7 Base64 encipher for RC4 encryption implemention (not using Hexadecimal like previous releases) - which is also included within this release.
+
+It does not work anymore. It is just simply here for educational purposes only. It demonstrates a good example of the Diffie-Hellman Key Exchange, RC4 encryption routine, Flash COM component communication (in as-good-a-threadsafe-matter-as-possible!), as well as HTTP POST within .NET and async Client/Server sockets. 
