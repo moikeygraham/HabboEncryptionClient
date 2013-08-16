@@ -1,0 +1,163 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace FlashCrypto.Habbo.Utils
+{
+    class MikeUtils
+    {
+        #region Base64
+        public static string encodeB64(int value, int length)
+        {
+            string stack = "";
+            for (int x = 1; x <= length; x++)
+            {
+                int offset = 6 * (length - x);
+                byte val = (byte)(64 + (value >> offset & 0x3f));
+                stack += (char)val;
+            }
+            return stack;
+        }
+        public static string encodeB64(string Val)
+        {
+            int value = Val.Length;
+            int length = 2;
+            string stack = "";
+            for (int x = 1; x <= length; x++)
+            {
+                int offset = 6 * (length - x);
+                byte val = (byte)(64 + (value >> offset & 0x3f));
+                stack += (char)val;
+            }
+            return stack;
+        }
+        public static string encodeB64(int value)
+        {
+            int length = 2;
+            string stack = "";
+            for (int x = 1; x <= length; x++)
+            {
+                int offset = 6 * (length - x);
+                byte val = (byte)(64 + (value >> offset & 0x3f));
+                stack += (char)val;
+            }
+            return stack;
+        }
+        public static int decodeB64(string Val)
+        {
+            char[] val = Val.ToCharArray();
+            int intTot = 0;
+            int y = 0;
+            for (int x = (val.Length - 1); x >= 0; x--)
+            {
+                int intTmp = (int)(byte)((val[x] - 64));
+                if (y > 0)
+                {
+                    intTmp = intTmp * (int)(Math.Pow(64, y));
+                }
+                intTot += intTmp;
+                y++;
+            }
+            return intTot;
+        }
+        #endregion
+
+        #region Wired
+        public static string encodeVL64(int i)
+        {
+            try
+            {
+                byte[] wf = new byte[6];
+                int pos = 0;
+                int startPos = pos;
+                int bytes = 1;
+                int negativeMask = i >= 0 ? 0 : 4;
+                i = Math.Abs(i);
+                wf[pos++] = (byte)(64 + (i & 3));
+                for (i >>= 2; i != 0; i >>= 6)
+                {
+                    bytes++;
+                    wf[pos++] = (byte)(64 + (i & 0x3f));
+                }
+
+                wf[startPos] = (byte)(wf[startPos] | bytes << 3 | negativeMask);
+
+                System.Text.ASCIIEncoding encoder = new ASCIIEncoding();
+                string tmp = encoder.GetString(wf);
+                return tmp.Replace("\0", "");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("VL64 encode failed!", "VL64 Failed!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            return "";
+        }
+
+        public static int decodeVL64(string data)
+        {
+            return decodeVL64(data.ToCharArray());
+        }
+
+        public static int decodeVL64(char[] raw)
+        {
+            try
+            {
+                int pos = 0;
+                int v = 0;
+                bool negative = (raw[pos] & 4) == 4;
+                int totalBytes = raw[pos] >> 3 & 7;
+                v = raw[pos] & 3;
+                pos++;
+                int shiftAmount = 2;
+                for (int b = 1; b < totalBytes; b++)
+                {
+                    v |= (raw[pos] & 0x3f) << shiftAmount;
+                    shiftAmount = 2 + 6 * b;
+                    pos++;
+                }
+
+                if (negative)
+                    v *= -1;
+
+                return v;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("VL64 Decode failed!", "VL64 Failed!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                return 0;
+            }
+        }
+        #endregion
+
+        public static String GenerateRandom()
+        {
+            String tmp = "";
+            var Rnd = new Random();
+            bool isInt = false;
+
+            for (int x = 0; x <= 32; x++)
+            {
+                Char tmp2;
+
+                if (isInt == false)
+                {
+                    tmp2 = (Char)Rnd.Next(65, 90);
+                    isInt = true;
+                }
+                else
+                {
+                    tmp2 = (Char)Rnd.Next(48, 57);
+                    isInt = false;
+                }
+
+                tmp += tmp2.ToString();
+            }
+
+            return tmp;
+        }
+    }
+}
